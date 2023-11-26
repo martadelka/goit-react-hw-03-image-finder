@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-
 import { Toaster } from 'react-hot-toast';
-
+import { fetchImages } from 'API';
 import { Searchbar } from './Searchbar/Searchbar';
 import { Gallery } from './ImageGallery/ImageGallery';
 import { Pagination } from './Button/Button';
-import { Loader } from './Loader/Loader'
-
-import { fetchImages } from "API";
 import { Wrapper } from './App.styled'
+import { Loader } from './Loader/Loader'
+import {notifyInfo, success} from './Notify/Notify'
 
-import {notifyInfo, notifyInputQuerry, success} from './Notify/Notify'
+
 
 
 export class App extends Component {
@@ -19,12 +17,13 @@ export class App extends Component {
     images: [],
     page: 1,
     loading: false,
+    showBtn: false,
   };
 
 
-  changeQuery = newQuery => {
+  onSubmit = newQuery => {
     this.setState({
-      query: `${Date.now()}/${newQuery}`,
+      query: newQuery,
       images: [],
       page: 1
     });
@@ -33,48 +32,35 @@ export class App extends Component {
 
   componentDidUpdate = async (prevProps, prevState) => {
     const prevQuery = prevState.query;
-    const searchQuery = this.state.query;
     const prevPage = prevState.page;
-    const nexPage = this.state.page;
+    const { query, page } = this.state;
 
-    if (prevQuery !== searchQuery || prevPage !== nexPage) {
+    if (prevQuery !== query || prevPage !== page) {
       this.loadResult();
     }
   };
 
   loadResult = async () => {
-    const searchQuery = this.state.query;
-    const nexPage = this.state.page;
+    const { query, page } = this.state;
 
     try {
       this.setState({ loading: true });
-      const img = await fetchImages(searchQuery, nexPage);
-      if (img.length) {
-        this.setState(prevState => ({
-          images: this.state.page > 1 ? [...prevState.images, ...img] : img,
-        }));
-        success(searchQuery);
-        this.setState({ loading: false });
-      } else {
+      const img = await fetchImages(query, page);
+      if (img.length === 0) {
         notifyInfo();
-        this.setState({ loading: false });
+        return;
+      } else {
+        this.setState(prevState => ({
+          images: [...prevState.images, ...img],
+        }));
+        showBtn === this.state.page < M(totalHits / 12) ? true : false;
+        success(query);
       }
     } catch (error) {
       console.log(error);
+    } finally {
       this.setState({ loading: false });
     }
-  };
-
-  handleSubmit = (evt) => {
-    evt.preventDefault();
-    if (evt.target.elements.query.value.trim() === '') {
-      notifyInputQuerry();
-      return;
-    }
-    this.changeQuery(evt.target.elements.query.value);
-
-
-    evt.target.reset();
   };
 
   handleLoadMore = () => {

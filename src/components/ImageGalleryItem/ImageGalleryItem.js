@@ -28,8 +28,10 @@ export class GalleryImage extends Component {
     isModalOpen: false,
   };
 
-  openModal = () => this.setState({ isModalOpen: true });
-  closeModal = () => this.setState({ isModalOpen: false });
+  toggleModal = () => this.setState(this.state.isModalOpen ? true : false)
+
+  // openModal = () => this.setState({ isModalOpen: true });
+  // closeModal = () => this.setState({ isModalOpen: false });
 
   render() {
     const { webformatURL, tags, largeImageURL } = this.props.item;
@@ -40,11 +42,11 @@ export class GalleryImage extends Component {
           src={webformatURL}
           alt={tags}
           load="lazy"
-          onClick={this.openModal}
+          onClick={this.toggleModal}
         />
         <Modal
           isOpen={isModalOpen}
-          onRequestClose={this.closeModal}
+          onRequestClose={this.toggleModal}
           style={customStyles}
           contentLabel="Example Modal"
         >
