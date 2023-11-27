@@ -28,10 +28,9 @@ export class GalleryImage extends Component {
     isModalOpen: false,
   };
 
-  toggleModal = () => this.setState(this.state.isModalOpen ? true : false)
-
-  // openModal = () => this.setState({ isModalOpen: true });
-  // closeModal = () => this.setState({ isModalOpen: false });
+  toggleModal = () => {
+    this.setState(prevState => ({isModalOpen: !prevState.isModalOpen}));
+  }
 
   render() {
     const { webformatURL, tags, largeImageURL } = this.props.item;

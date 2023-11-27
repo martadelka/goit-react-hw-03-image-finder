@@ -18,12 +18,13 @@ export class App extends Component {
     page: 1,
     loading: false,
     showBtn: false,
+    randomId: false
   };
 
 
-  onSubmit = newQuery => {
+  onSubmit = () => {
     this.setState({
-      query: newQuery,
+      randomId: Math.floor(Math.random() * 100),
       images: [],
       page: 1
     });
@@ -31,31 +32,33 @@ export class App extends Component {
   };
 
   componentDidUpdate = async (prevProps, prevState) => {
-    const prevQuery = prevState.query;
+    const prevRandomId = prevState.randomId;
     const prevPage = prevState.page;
-    const { query, page } = this.state;
+    const { randomId, page } = this.state;
 
-    if (prevQuery !== query || prevPage !== page) {
+    if (prevRandomId !== randomId || prevPage !== page) {
       this.loadResult();
     }
   };
 
   loadResult = async () => {
     const { query, page } = this.state;
-
     try {
       this.setState({ loading: true });
-      const img = await fetchImages(query, page);
-      if (img.length === 0) {
-        notifyInfo();
-        return;
-      } else {
-        this.setState(prevState => ({
-          images: [...prevState.images, ...img],
-        }));
-        showBtn === this.state.page < M(totalHits / 12) ? true : false;
-        success(query);
-      }
+      const img = await fetchImages(query, page).then(result => {
+        const data = result.data;
+        const total = data.totalHits;
+        if (img.length === 0) {
+          notifyInfo();
+          return;
+        } else {
+          this.setState(prevState => ({
+            images: [...prevState.images, ...img],
+            showBtn: this.state.page < Math.ceil(total / 12)
+          }));
+          success(query);
+        }
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -77,7 +80,7 @@ export class App extends Component {
         <Searchbar onSubmit={ this.handleSubmit } />
         { loading && <Loader /> }
         { images.length > 0 && <Gallery imgItems={ images } /> } 
-        { images.length > 0 && <Pagination onClick={ this.handleLoadMore }>Load More</Pagination> }
+        { this.state.showBtn && <Pagination onClick={ this.handleLoadMore }>Load More</Pagination> }
         <Toaster position="top-right" reverseOrder={true}/>
       </Wrapper>
     )
