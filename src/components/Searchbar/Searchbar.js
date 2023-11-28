@@ -24,7 +24,7 @@ export class Searchbar extends Component {
       notifyInputQuerry();
       return;
     }
-    this.onInputChange(event.target.elements.query.value);
+    this.props.onSubmit(this.state.query);
     event.target.reset();
   };
 

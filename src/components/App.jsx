@@ -22,21 +22,24 @@ export class App extends Component {
   };
 
 
-  onSubmit = () => {
+  onSubmit = (query) => {
     this.setState({
+      query,
       randomId: Math.floor(Math.random() * 100),
       images: [],
       page: 1
     });
-    
   };
+
+
 
   componentDidUpdate = async (prevProps, prevState) => {
     const prevRandomId = prevState.randomId;
     const prevPage = prevState.page;
-    const { randomId, page } = this.state;
+    const prevQuery = prevState.query;
+    const { randomId, page, query } = this.state;
 
-    if (prevRandomId !== randomId || prevPage !== page) {
+    if (prevRandomId !== randomId || prevPage !== page || prevQuery !== query) {
       this.loadResult();
     }
   };
