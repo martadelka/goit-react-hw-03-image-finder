@@ -48,9 +48,11 @@ export class App extends Component {
     const { query, page } = this.state;
     try {
       this.setState({ loading: true });
-      const img = await fetchImages(query, page).then(result => {
-        const data = result.data;
+      await fetchImages(query, page).then(result => {
+        const data = result;
         const total = data.totalHits;
+        const img = data.hits;
+
         if (img.length === 0) {
           notifyInfo();
           return;
@@ -80,7 +82,7 @@ export class App extends Component {
     const { loading, images } = this.state;
     return (
       <Wrapper>
-        <Searchbar onSubmit={ this.handleSubmit } />
+        <Searchbar onSubmit={ this.onSubmit } />
         { loading && <Loader /> }
         { images.length > 0 && <Gallery imgItems={ images } /> } 
         { this.state.showBtn && <Pagination onClick={ this.handleLoadMore }>Load More</Pagination> }
