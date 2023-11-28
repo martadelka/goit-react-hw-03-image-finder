@@ -48,18 +48,18 @@ export class App extends Component {
     const { query, page } = this.state;
     try {
       this.setState({ loading: true });
-      await fetchImages(query, page).then(result => {
-        const data = result;
-        const total = data.totalHits;
-        const img = data.hits;
+      fetchImages(query, page).then(result => {
+        // const data = result;
+        // const total = data.totalHits;
+        // const img = data.hits;
 
-        if (img.length === 0) {
+        if (result.length === 0) {
           notifyInfo();
           return;
         } else {
           this.setState(prevState => ({
-            images: [...prevState.images, ...img],
-            showBtn: this.state.page < Math.ceil(total / 12)
+            images: [...prevState.images, ...result],
+            showBtn: this.state.page < Math.ceil(result.totalHits / 12)
           }));
           success(query);
         }
