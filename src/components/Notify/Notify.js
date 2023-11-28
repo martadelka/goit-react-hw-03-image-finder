@@ -9,11 +9,9 @@ export const notifyInputQuerry = () =>
   toast.error('Sorry, please provide a search word');
 
 export const success = query => {
-  const idQuery = query.split('/');
-  const extractedQuery = idQuery[1];
   toast.success(
     <div>
-      Your request: <b>{extractedQuery}</b> is found!
+      Your request: <b>{query}</b> is found!
     </div>,
     {
       duration: 4000,
