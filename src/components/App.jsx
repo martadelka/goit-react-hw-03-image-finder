@@ -59,7 +59,7 @@ export class App extends Component {
         } else {
           this.setState(prevState => ({
             images: [...prevState.images, ...result],
-            showBtn: this.state.page < Math.ceil(result.totalHits / 12)
+            showBtn: result.length === 12 || result.length === 0 ? true : false,
           }));
           success(query);
         }
